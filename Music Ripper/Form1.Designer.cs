@@ -34,9 +34,10 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.DestinationMusicPath = new System.Windows.Forms.TextBox();
             this.SourceMusicPath = new System.Windows.Forms.TextBox();
-            this.Refresh = new System.Windows.Forms.Button();
-            this.DestinationMusicDrives = new System.Windows.Forms.ListBox();
-            this.SourceMusicDrivers = new System.Windows.Forms.ListBox();
+            this.SelectMusicSourceButton = new System.Windows.Forms.Button();
+            this.SelectDestinatonMusicButton = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
+            this.Load = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -75,11 +76,12 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.Load);
+            this.tabPage2.Controls.Add(this.Save);
+            this.tabPage2.Controls.Add(this.SelectDestinatonMusicButton);
+            this.tabPage2.Controls.Add(this.SelectMusicSourceButton);
             this.tabPage2.Controls.Add(this.DestinationMusicPath);
             this.tabPage2.Controls.Add(this.SourceMusicPath);
-            this.tabPage2.Controls.Add(this.DestinationMusicDrives);
-            this.tabPage2.Controls.Add(this.SourceMusicDrivers);
-            this.tabPage2.Controls.Add(this.Refresh);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -90,7 +92,7 @@
             // 
             // DestinationMusicPath
             // 
-            this.DestinationMusicPath.Location = new System.Drawing.Point(129, 68);
+            this.DestinationMusicPath.Location = new System.Drawing.Point(129, 32);
             this.DestinationMusicPath.Name = "DestinationMusicPath";
             this.DestinationMusicPath.ReadOnly = true;
             this.DestinationMusicPath.Size = new System.Drawing.Size(117, 20);
@@ -98,39 +100,51 @@
             // 
             // SourceMusicPath
             // 
-            this.SourceMusicPath.Location = new System.Drawing.Point(6, 68);
+            this.SourceMusicPath.Location = new System.Drawing.Point(6, 32);
             this.SourceMusicPath.Name = "SourceMusicPath";
             this.SourceMusicPath.ReadOnly = true;
             this.SourceMusicPath.Size = new System.Drawing.Size(117, 20);
             this.SourceMusicPath.TabIndex = 5;
             // 
-            // Refresh
+            // SelectMusicSourceButton
             // 
-            this.Refresh.Location = new System.Drawing.Point(253, 6);
-            this.Refresh.Name = "Refresh";
-            this.Refresh.Size = new System.Drawing.Size(75, 23);
-            this.Refresh.TabIndex = 1;
-            this.Refresh.Text = "רענן";
-            this.Refresh.UseVisualStyleBackColor = true;
-            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
+            this.SelectMusicSourceButton.Location = new System.Drawing.Point(6, 3);
+            this.SelectMusicSourceButton.Name = "SelectMusicSourceButton";
+            this.SelectMusicSourceButton.Size = new System.Drawing.Size(117, 23);
+            this.SelectMusicSourceButton.TabIndex = 7;
+            this.SelectMusicSourceButton.Text = "בחירת מקור קבצים";
+            this.SelectMusicSourceButton.UseVisualStyleBackColor = true;
+            this.SelectMusicSourceButton.Click += new System.EventHandler(this.SelectMusicSourceButton_Click);
             // 
-            // DestinationMusicDrives
+            // SelectDestinatonMusicButton
             // 
-            this.DestinationMusicDrives.FormattingEnabled = true;
-            this.DestinationMusicDrives.Location = new System.Drawing.Point(127, 6);
-            this.DestinationMusicDrives.Name = "DestinationMusicDrives";
-            this.DestinationMusicDrives.Size = new System.Drawing.Size(120, 56);
-            this.DestinationMusicDrives.TabIndex = 4;
-            this.DestinationMusicDrives.DoubleClick += new System.EventHandler(this.DestinationMusicDrives_DoubleClick);
+            this.SelectDestinatonMusicButton.Location = new System.Drawing.Point(129, 3);
+            this.SelectDestinatonMusicButton.Name = "SelectDestinatonMusicButton";
+            this.SelectDestinatonMusicButton.Size = new System.Drawing.Size(117, 23);
+            this.SelectDestinatonMusicButton.TabIndex = 8;
+            this.SelectDestinatonMusicButton.Text = "בחירת יעד קבצים";
+            this.SelectDestinatonMusicButton.UseVisualStyleBackColor = true;
+            this.SelectDestinatonMusicButton.Click += new System.EventHandler(this.SelectDestinatonMusicButton_Click);
             // 
-            // SourceMusicDrivers
+            // Save
             // 
-            this.SourceMusicDrivers.FormattingEnabled = true;
-            this.SourceMusicDrivers.Location = new System.Drawing.Point(3, 6);
-            this.SourceMusicDrivers.Name = "SourceMusicDrivers";
-            this.SourceMusicDrivers.Size = new System.Drawing.Size(120, 56);
-            this.SourceMusicDrivers.TabIndex = 3;
-            this.SourceMusicDrivers.DoubleClick += new System.EventHandler(this.SourceMusicDrivers_DoubleClick);
+            this.Save.Location = new System.Drawing.Point(6, 58);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(240, 23);
+            this.Save.TabIndex = 9;
+            this.Save.Text = "שמור הגדרוח";
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
+            // 
+            // Load
+            // 
+            this.Load.Location = new System.Drawing.Point(6, 87);
+            this.Load.Name = "Load";
+            this.Load.Size = new System.Drawing.Size(240, 23);
+            this.Load.TabIndex = 10;
+            this.Load.Text = "טען הגדרות";
+            this.Load.UseVisualStyleBackColor = true;
+            this.Load.Click += new System.EventHandler(this.Load_Click);
             // 
             // Form1
             // 
@@ -156,9 +170,10 @@
         private System.Windows.Forms.TextBox DestinationMusicPath;
         private System.Windows.Forms.TextBox SourceMusicPath;
         private System.Windows.Forms.Button LoadMusic;
-        private System.Windows.Forms.ListBox DestinationMusicDrives;
-        private System.Windows.Forms.ListBox SourceMusicDrivers;
-        public System.Windows.Forms.Button Refresh;
+        private System.Windows.Forms.Button SelectDestinatonMusicButton;
+        private System.Windows.Forms.Button SelectMusicSourceButton;
+        private System.Windows.Forms.Button Save;
+        private System.Windows.Forms.Button Load;
     }
 }
 

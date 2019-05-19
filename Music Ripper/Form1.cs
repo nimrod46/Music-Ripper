@@ -1,4 +1,5 @@
 ﻿using Mp3Lib;
+using Shell32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,112 +18,92 @@ namespace Music_Ripper
 
     public partial class Form1 : Form
     {
-        Settings settings;
+        private Settings settings;
+        private XmlManager<Settings> xmlManager;
+        private Shell shell;
+        private PortableDevice device;
         public Form1()
         {
+          
             InitializeComponent();
-            RefreshDrivers();
-            settings = new Settings(SourceMusicPath, DestinationMusicPath);
-        }
-
-
-        private void RefreshDrivers()
-        {
-            RefreshBox(SourceMusicDrivers);
-            RefreshBox(DestinationMusicDrives);
-        }
-
-        private void RefreshBox(ListControl list)
-        {
-            List<DriveInf> drivers = new List<DriveInf>();
-            foreach (DriveInfo driver in DriveInfo.GetDrives())
+            shell = new Shell();
+            xmlManager = new XmlManager<Settings>();
+            if (File.Exists("Settings"))
             {
-                string perfix = "";
-                bool isRelevent = false;
-                switch (driver.DriveType)
-                {
-                    case DriveType.Unknown:
-                        break;
-                    case DriveType.NoRootDirectory:
-                        break;
-                    case DriveType.Removable:
-                        perfix = "USB: ";
-                        isRelevent = true;
-                        break;
-                    case DriveType.Fixed:
-                        isRelevent = true;
-                        break;
-                    case DriveType.Network:
-                        break;
-                    case DriveType.CDRom:
-                        perfix = "CD: ";
-                        isRelevent = true;
-                        break;
-                    case DriveType.Ram:
-                        break;
-                    default:
-                        break;
-                }
-                if (isRelevent)
-                {
-                    drivers.Add(new DriveInf(driver.RootDirectory.ToString(), perfix));
-                }
+                LoadSettings();
+                UpdateTextBoxs();
             }
-            list.DataSource = drivers;
+            else
+            {
+                settings = new Settings();
+            }
         }
 
-        private bool TryGetSelectedPathFromDriver(string drive, out string path)
+        private void UpdateTextBoxs()
+        {
+            SourceMusicPath.Text = GetPathAsText(settings.SourceMusicDriversPath);
+            DestinationMusicPath.Text = GetPathAsText(settings.DestinationMusicDriversPath);
+        }
+
+        private void SaveSettings()
+        {
+            XmlManager<Settings> xmlManager = new XmlManager<Settings>();
+            xmlManager.Save("Settings", settings);
+        }
+
+        private void LoadSettings()
+        {
+            if (!File.Exists("Settings")) { return; }
+            XmlManager<Settings> xmlManager = new XmlManager<Settings>();
+            settings = xmlManager.Load("Settings");
+        }
+
+        private bool TryGetSelectedPath(bool canBeNoneFileSystem ,out string path)
         {
             path = "";
-            foreach (DriveInfo driver in DriveInfo.GetDrives())
+            Folder folder = shell.BrowseForFolder((int) Handle, "Select folder", 0);
+            if (folder != null)
             {
-                if (driver.RootDirectory.ToString() == drive)
-                {
-                    using (FolderBrowserDialog musicFolder = new FolderBrowserDialog())
-                    {
-                        musicFolder.SelectedPath = driver.RootDirectory.ToString();
-                        DialogResult result = musicFolder.ShowDialog();
-                        if (result == DialogResult.OK)
-                        {
-                            path = musicFolder.SelectedPath;
-                        }
-                    }
-                    return true;
+                path = (folder as Folder3).Self.Path;
+                if (!(folder as Folder3).Self.IsFileSystem && path.Contains("SID-")){
+                    int startBadIndex = path.IndexOf("SID-") - 1;
+                    int endBadIndex = path.IndexOf("\\", startBadIndex + 1);
+                    path = path.Remove(startBadIndex, endBadIndex - startBadIndex);
                 }
+                if (!(folder as Folder3).Self.IsFileSystem && !canBeNoneFileSystem)
+                {
+                    return false;
+                }
+                return true;
             }
             return false;
         }
 
-        private void Refresh_Click(object sender, EventArgs e)
+        private void UpdateMusicPath(Action<string> setting, bool canBeNoneFileStem)
         {
-            RefreshDrivers();
-        }
-
-        private void SourceMusicDrivers_DoubleClick(object sender, EventArgs e)
-        {
-            if (TryGetSelectedPathFromDriver(((DriveInf)SourceMusicDrivers.SelectedItem).RootDir, out string path))
+            if (TryGetSelectedPath(canBeNoneFileStem, out string path))
             {
-                settings.SourceMusicDriversPath = path;
-                SourceMusicDrivers.Text = path;
-                Console.WriteLine(path);
+                setting(path);
+                UpdateTextBoxs();
             }
         }
 
-        private void DestinationMusicDrives_DoubleClick(object sender, EventArgs e)
+        private void SetMusicTag()
         {
-            if (TryGetSelectedPathFromDriver(((DriveInf)DestinationMusicDrives.SelectedItem).RootDir, out string path))
+            FolderItem sourceFolder = (shell.NameSpace(settings.SourceMusicDriversPath) as Folder3).Self;
+            if (!sourceFolder.IsFileSystem)
             {
-                settings.DestinationMusicDriversPath = path;
-                DestinationMusicDrives.Text = path;
-                Console.WriteLine(path);
+                //TODO: Add dialog
+                return;
             }
-        }
 
-        private void LoadMusic_Click(object sender, EventArgs e)
-        {
-            if (!Directory.Exists(settings.SourceMusicDriversPath)) { return; }
+            if (!Directory.Exists(sourceFolder.Path))
+            {
+                //TODO: Add dialog
+                return;
+            }
 
-            string[] musicFiles = Directory.GetFiles(settings.SourceMusicDriversPath, "*.mp3");
+            string[] musicFiles = Directory.GetFiles(sourceFolder.Path, "*.mp3");
             Mp3File mp3File;
             foreach (string musicFilePath in musicFiles)
             {
@@ -135,7 +116,55 @@ namespace Music_Ripper
                 mp3File.TagHandler.Song = "Song";
                 mp3File.Update();
             }
+        }
 
+        private void MoveMusic()
+        {
+            
+            Folder srcFolder = shell.NameSpace(settings.SourceMusicDriversPath);
+            Folder dstFolder =  shell.NameSpace(settings.DestinationMusicDriversPath);
+            foreach (FolderItem currFolderItem in srcFolder.Items())
+            {
+                if (currFolderItem.Type == "MP3 File")
+                {
+                    dstFolder.CopyHere(currFolderItem, 0);
+                }
+            }
+        }
+
+        private string GetPathAsText(string path)
+        {
+            Folder folder = shell.NameSpace(path);
+            if(folder == null)
+            {
+                return "";
+            }
+            FolderItem folderItem = (folder as Folder3).Self;
+            if (folderItem.IsFileSystem)
+            {
+                return folderItem.Path;
+            }
+            else
+            {
+                return folderItem.Name;
+            }
+        }
+
+        private void LoadMusic_Click(object sender, EventArgs e)
+        {
+            SetMusicTag();
+            MoveMusic();
+        }
+
+
+        private void SelectMusicSourceButton_Click(object sender, EventArgs e)
+        {
+            UpdateMusicPath(p => settings.SourceMusicDriversPath = p, false);
+        }
+
+        private void SelectDestinatonMusicButton_Click(object sender, EventArgs e)
+        {
+            UpdateMusicPath(p => settings.DestinationMusicDriversPath = p, true);
         }
 
         private struct DriveInf
@@ -153,6 +182,16 @@ namespace Music_Ripper
             {
                 return Perfix + RootDir;
             }
+        }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
+        private void Load_Click(object sender, EventArgs e)
+        {
+            LoadSettings();   
         }
     }
 }
