@@ -32,8 +32,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.LoadMusic = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.Load = new System.Windows.Forms.Button();
-            this.Save = new System.Windows.Forms.Button();
+            this.LoadSettings = new System.Windows.Forms.Button();
+            this.SaveSettings = new System.Windows.Forms.Button();
             this.SelectDestinatonMusicButton = new System.Windows.Forms.Button();
             this.SelectMusicSourceButton = new System.Windows.Forms.Button();
             this.DestinationMusicPath = new System.Windows.Forms.TextBox();
@@ -84,8 +84,8 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.Load);
-            this.tabPage2.Controls.Add(this.Save);
+            this.tabPage2.Controls.Add(this.LoadSettings);
+            this.tabPage2.Controls.Add(this.SaveSettings);
             this.tabPage2.Controls.Add(this.SelectDestinatonMusicButton);
             this.tabPage2.Controls.Add(this.SelectMusicSourceButton);
             this.tabPage2.Controls.Add(this.DestinationMusicPath);
@@ -98,25 +98,25 @@
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // Load
+            // LoadSettings
             // 
-            this.Load.Location = new System.Drawing.Point(6, 87);
-            this.Load.Name = "Load";
-            this.Load.Size = new System.Drawing.Size(240, 23);
-            this.Load.TabIndex = 10;
-            this.Load.Text = "טען הגדרות";
-            this.Load.UseVisualStyleBackColor = true;
-            this.Load.Click += new System.EventHandler(this.Load_Click);
+            this.LoadSettings.Location = new System.Drawing.Point(6, 87);
+            this.LoadSettings.Name = "LoadSettings";
+            this.LoadSettings.Size = new System.Drawing.Size(240, 23);
+            this.LoadSettings.TabIndex = 10;
+            this.LoadSettings.Text = "טען הגדרות";
+            this.LoadSettings.UseVisualStyleBackColor = true;
+            this.LoadSettings.Click += new System.EventHandler(this.Load_Click);
             // 
-            // Save
+            // SaveSettings
             // 
-            this.Save.Location = new System.Drawing.Point(6, 58);
-            this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(240, 23);
-            this.Save.TabIndex = 9;
-            this.Save.Text = "שמור הגדרוח";
-            this.Save.UseVisualStyleBackColor = true;
-            this.Save.Click += new System.EventHandler(this.Save_Click);
+            this.SaveSettings.Location = new System.Drawing.Point(6, 58);
+            this.SaveSettings.Name = "SaveSettings";
+            this.SaveSettings.Size = new System.Drawing.Size(240, 23);
+            this.SaveSettings.TabIndex = 9;
+            this.SaveSettings.Text = "שמור הגדרוח";
+            this.SaveSettings.UseVisualStyleBackColor = true;
+            this.SaveSettings.Click += new System.EventHandler(this.Save_Click);
             // 
             // SelectDestinatonMusicButton
             // 
@@ -215,8 +215,8 @@
         private System.Windows.Forms.Button LoadMusic;
         private System.Windows.Forms.Button SelectDestinatonMusicButton;
         private System.Windows.Forms.Button SelectMusicSourceButton;
-        private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.Button Load;
+        private System.Windows.Forms.Button SaveSettings;
+        private System.Windows.Forms.Button LoadSettings;
         public System.Windows.Forms.TextBox DestinationMusicPath;
         public System.Windows.Forms.TextBox SourceMusicPath;
         public System.Windows.Forms.TextBox textBox3;

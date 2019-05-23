@@ -1,6 +1,7 @@
 ﻿using Shell32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,69 +10,79 @@ using System.Xml.Serialization;
 
 namespace Music_Ripper
 {
-    public class Settings
+    public struct DynamicPath
     {
-        private string sourceMusicDriversPath;
-        private string destinationMusicDriversPath;
-        public Settings()
-        {
-        }
+        public string RootDrivePath { get; set; }
+        public string[] SubFolders { get; set; }
 
-        /*
-        [XmlIgnore]
-        public Folder SourceMusicDriversPath
+        public string GetPath()
         {
-            get => shell.NameSpace(sourceMusicDriversPath);
-            set
+            Shell shell = new Shell();
+            string path = RootDrivePath;
+            Folder3 folder = (Folder3)shell.NameSpace(path);
+            if (string.IsNullOrWhiteSpace(path))
             {
-                sourceMusicDriversPath = (value as Folder3).Self.Path;
-                if ((value as Folder3).Self.IsFileSystem)
+                return "";
+            }
+
+            if (folder == null)
+            {
+                Console.WriteLine("No device found at: " + path);
+                return "";
+            }
+            if (SubFolders != null && SubFolders.Length != 0)
+            {
+                folder = (Folder3)shell.NameSpace(path);
+                List<FolderItem> items = folder.Items().Cast<FolderItem>().ToList();
+                if(items.Count == 0)
                 {
-                    sourceMusicTextPath.Text = (value as Folder3).Self.Path;
+                    Console.WriteLine("Make sure the device is set to \"transfer file mode\"");
+                    return "";
                 }
-                else
+                string subFolder = SubFolders[0];
+                FolderItem folderItem = items.FirstOrDefault(f => f.Name == subFolder);
+                if (folderItem == null)
                 {
-                    sourceMusicTextPath.Text = (value as Folder3).Self.Name;
+                    folder = (Folder3)items[0].GetFolder;
+                }
+               
+                foreach (string item in SubFolders)
+                {
+                    items = folder.Items().Cast<FolderItem>().ToList();
+                    folderItem = items.First(f => f.Name == item);
+                    folder = (Folder3)folderItem.GetFolder;
                 }
             }
+            
+            return SettingsTab.RemoveBadStringFromPath(folder);
         }
 
-        [XmlIgnore]
-        public Folder DestinationMusicDriversPath
+        public class Settings
         {
-            get => shell.NameSpace(destinationMusicDriversPath);
-            set
+            private DynamicPath sourceMusicDriversPath;
+            private DynamicPath destinationMusicDriversPath;
+            public Settings()
             {
-                destinationMusicDriversPath = (value as Folder3).Self.Path;
-                if ((value as Folder3).Self.IsFileSystem)
+            }
+
+            public DynamicPath SourceMusicDriversPath
+            {
+                get => sourceMusicDriversPath;
+                set
                 {
-                    destinationMusicTextPath.Text = (value as Folder3).Self.Path;
+                    sourceMusicDriversPath = value;
                 }
-                else
+            }
+
+            public DynamicPath DestinationMusicDriversPath
+            {
+                get => destinationMusicDriversPath;
+                set
                 {
-                    destinationMusicTextPath.Text = (value as Folder3).Self.Name;
+                    destinationMusicDriversPath = value;
                 }
             }
-        }
-        */
 
-        public string SourceMusicDriversPath
-        {
-            get => sourceMusicDriversPath;
-            set
-            {
-                sourceMusicDriversPath = value;
-            }
         }
-
-        public string DestinationMusicDriversPath
-        {
-            get => destinationMusicDriversPath;
-            set
-            {
-                destinationMusicDriversPath = value;
-            }
-        }
-
     }
 }

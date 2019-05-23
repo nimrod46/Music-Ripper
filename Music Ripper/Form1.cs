@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32.SafeHandles;
-using Mp3Lib;
 using Shell32;
 using System;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace Music_Ripper
         {
             InitializeComponent();
             shell = new Shell();
-            settingsTab = new SettingsTab(SourceMusicPath, DestinationMusicPath);
+            settingsTab = new SettingsTab(this);
             programTab = new ProgramTab(this);
         }   
 
@@ -56,12 +55,12 @@ namespace Music_Ripper
 
         private void SelectMusicSourceButton_Click(object sender, EventArgs e)
         {
-            settingsTab.UpdateMusicPath(p => settingsTab.Settings.SourceMusicDriversPath = p, false);
+            settingsTab.UpdateSourceMusicPath();
         }
 
         private void SelectDestinatonMusicButton_Click(object sender, EventArgs e)
         {
-            settingsTab.UpdateMusicPath(p => settingsTab.Settings.DestinationMusicDriversPath = p, true);
+            settingsTab.UpdateDestinationMusicPath();
         }      
 
         private void Save_Click(object sender, EventArgs e)
