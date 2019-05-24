@@ -79,7 +79,7 @@
     <Compile Include="ProgramTab.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsTap.cs" />
+    <Compile Include="SettingsTab.cs" />
     <Compile Include="XmlManager.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

@@ -44,14 +44,24 @@ namespace Music_Ripper
             shell = new Shell();
             settingsTab = new SettingsTab(this);
             programTab = new ProgramTab(this);
-        }   
+        }
+
+        private void NoMusicFound(string path)
+        {
+            Console.WriteLine("No music folder was found in: " + path);
+        }
 
         private void LoadMusic_Click(object sender, EventArgs e)
         {
-            programTab.SetMusicTag();
-            programTab.MoveMusic();
+            if (programTab.TryGetPathWithMp3Files(settingsTab.Settings.SourceMusicDriversPath.GetPath(), out string sourcePath)){
+                programTab.SetMusicTag(sourcePath);
+                programTab.MoveMusic(sourcePath, settingsTab.Settings.DestinationMusicDriversPath.GetPath());
+            }
+            else
+            {
+                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
+            }
         }
-
 
         private void SelectMusicSourceButton_Click(object sender, EventArgs e)
         {
@@ -75,12 +85,26 @@ namespace Music_Ripper
 
         private void ChangeFileTag_Click(object sender, EventArgs e)
         {
-            programTab.SetMusicTag();
+            if (programTab.TryGetPathWithMp3Files(settingsTab.Settings.SourceMusicDriversPath.GetPath(), out string sourcePath))
+            {
+                programTab.SetMusicTag(sourcePath);
+            }
+            else
+            {
+                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
+            }
         }
 
         private void MoveFiles_Click(object sender, EventArgs e)
         {
-            programTab.MoveMusic();
+            if (programTab.TryGetPathWithMp3Files(settingsTab.Settings.SourceMusicDriversPath.GetPath(), out string sourcePath))
+            {
+                programTab.MoveMusic(sourcePath, settingsTab.Settings.DestinationMusicDriversPath.GetPath());
+            }
+            else
+            {
+                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
+            }
         }
     }
 }

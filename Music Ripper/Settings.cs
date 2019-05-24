@@ -27,15 +27,18 @@ namespace Music_Ripper
 
             if (folder == null)
             {
+                MessageBox.Show("לא היה ניתן למצוא את הנתיב שצוין", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
                 Console.WriteLine("No device found at: " + path);
                 return "";
             }
+
             if (SubFolders != null && SubFolders.Length != 0)
             {
                 folder = (Folder3)shell.NameSpace(path);
                 List<FolderItem> items = folder.Items().Cast<FolderItem>().ToList();
                 if(items.Count == 0)
                 {
+                    MessageBox.Show("יש לוודא שהמכשיר מוגדר למצב העברת קבצים", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
                     Console.WriteLine("Make sure the device is set to \"transfer file mode\"");
                     return "";
                 }
@@ -49,7 +52,13 @@ namespace Music_Ripper
                 foreach (string item in SubFolders)
                 {
                     items = folder.Items().Cast<FolderItem>().ToList();
-                    folderItem = items.First(f => f.Name == item);
+                    folderItem = items.FirstOrDefault(f => f.Name == item);
+                    if(folderItem == null)
+                    {
+                        MessageBox.Show(string.Format("לא נמצאה תיקייה: {0}", item), "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
+                        Console.WriteLine(@"Folder ""{0}"" was't not found", item);
+                        return "";
+                    }
                     folder = (Folder3)folderItem.GetFolder;
                 }
             }
@@ -59,30 +68,12 @@ namespace Music_Ripper
 
         public class Settings
         {
-            private DynamicPath sourceMusicDriversPath;
-            private DynamicPath destinationMusicDriversPath;
+            public DynamicPath SourceMusicDriversPath { get; set; }
+            public DynamicPath DestinationMusicDriversPath { get; set; }
+
             public Settings()
             {
             }
-
-            public DynamicPath SourceMusicDriversPath
-            {
-                get => sourceMusicDriversPath;
-                set
-                {
-                    sourceMusicDriversPath = value;
-                }
-            }
-
-            public DynamicPath DestinationMusicDriversPath
-            {
-                get => destinationMusicDriversPath;
-                set
-                {
-                    destinationMusicDriversPath = value;
-                }
-            }
-
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Shell32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Music_Ripper
 {
@@ -18,12 +20,46 @@ namespace Music_Ripper
             shell = new Shell();
         }
 
-        public void SetMusicTag()
+        public bool TryGetPathWithMp3Files(string rootPath, out string path)
         {
-            Folder folder = shell.NameSpace(form.settingsTab.Settings.SourceMusicDriversPath);
+            path = "";
+            if (string.IsNullOrWhiteSpace(rootPath))
+            {
+                MessageBox.Show("נתיב ריק", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
+                return false;
+            }
+            Folder pathFolder = shell.NameSpace(rootPath);
+            List<FolderItem> directories = pathFolder.Items().Cast<FolderItem>().Where(item => item.IsFolder).Cast<FolderItem>().OrderByDescending(item => item.ModifyDate).ToList();
+
+            int i = 0;
+            while (!pathFolder.Items().Cast<FolderItem>().Any(item => item.Type == "MP3 File"))
+            {
+                if (i >= directories.Count)
+                {
+                    //TODO: Add dialog that mp3 files were not found.
+                    MessageBox.Show("לא נמצאו קבצי MP3", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
+                    Console.WriteLine("no mp3 files were found");
+                    return false;
+                }
+                pathFolder = (Folder)directories[i].GetFolder;
+                i++;
+            }
+            path = ((Folder3)pathFolder).Self.Path;
+            return true;
+        }
+
+        public void SetMusicTag(string sourcePath)
+        {
+            if (string.IsNullOrWhiteSpace(sourcePath))
+            {
+                Console.WriteLine("Cannot change tag, path was not found");
+                return;
+            }
+            Folder folder = shell.NameSpace(sourcePath);
             if(folder == null)
             {
                 //TODO: Add dialog
+                Console.WriteLine("Cannot change tag, path was not found");
                 return;
             }
 
@@ -36,6 +72,7 @@ namespace Music_Ripper
                 tempFolder.NewFolder("Music ripper");
                 tempFolder = (Folder3)shell.NameSpace(Path.Combine(Path.GetTempPath(), "Music ripper"));
                 tempFolder.MoveHere(musicFilePath);
+                WaitForAFileTransfer(tempFolder, musicFilePath.Name);
                 FolderItem tempMpFile = tempFolder.Items().Cast<FolderItem>().First(item => item.Name == musicFilePath.Name);
                 using (TagLib.File file = TagLib.File.Create(tempMpFile.Path))
                 {
@@ -44,26 +81,27 @@ namespace Music_Ripper
                     file.Tag.Performers = new string[] { form.MusicTagName.Text };
                     file.Save();
                 }
-                Thread thread = new Thread(new ThreadStart(() =>
-                {
-                    folder.MoveHere(tempMpFile.Path);
-                    while (!folder.Items().Cast<FolderItem>().Any(item => item.Name == musicFilePath.Name))
-                    {
-                    }
-                }));
-                thread.Start();
-                thread.Join();
-                
+                folder.MoveHere(tempMpFile.Path);
+                WaitForAFileTransfer(folder, tempMpFile.Name);
             }
         }
 
-        public void MoveMusic()
+        public void MoveMusic(string sourcePath, string destinationPath)
         {
-            string sourcePath = form.settingsTab.Settings.SourceMusicDriversPath.GetPath();
-            string destinationPath = form.settingsTab.Settings.DestinationMusicDriversPath.GetPath();
+            if (string.IsNullOrWhiteSpace(sourcePath) || string.IsNullOrWhiteSpace(destinationPath))
+            {
+                Console.WriteLine("Invalid paths");
+                return;
+            }
             Folder srcFolder = shell.NameSpace(sourcePath);
             Folder dstFolder = shell.NameSpace(destinationPath);
-            if (!string.IsNullOrEmpty(form.MusicTagName.Text))
+           
+            if (srcFolder == null || dstFolder == null)
+            {
+                Console.WriteLine("Invalid paths");
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(form.MusicTagName.Text))
             {
                 dstFolder.NewFolder(form.MusicTagName.Text);
                 dstFolder = shell.NameSpace(Path.Combine(destinationPath, form.MusicTagName.Text));
@@ -75,6 +113,19 @@ namespace Music_Ripper
                     dstFolder.CopyHere(currFolderItem, 0);
                 }
             }
+        }
+
+        private void WaitForAFileTransfer(Folder folder, string file)
+        {
+            Thread thread = new Thread(new ThreadStart(() =>
+            {
+                while (!folder.Items().Cast<FolderItem>().Any(item => item.Name == file))
+                {
+                    Console.WriteLine("Waiting for file transfer...");
+                }
+            }));
+            thread.Start();
+            thread.Join();
         }
     }
 }

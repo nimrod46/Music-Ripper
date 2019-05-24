@@ -24,7 +24,7 @@ namespace Music_Ripper
             xmlManager = new XmlManager<Settings>();
             shell = new Shell();
 
-            if (File.Exists("Settings"))
+            if (File.Exists("Settings.xml"))
             {
                 LoadSettings();
             }
@@ -39,45 +39,45 @@ namespace Music_Ripper
         {
             UpdateMusicPath(p =>
             {
-                Folder path = shell.NameSpace(p);
-                List<FolderItem> directories = path.Items().Cast<FolderItem>().Where(item => item.IsFolder).Cast<FolderItem>().ToList();
-                
-                int i = 0;
-                while (!path.Items().Cast<FolderItem>().Any(item => item.Type == "MP3 File"))
-                {
-                    if (i >= directories.Count)
-                    {
-                        //TODO: Add dialog that mp3 files were not found.
-                        Console.WriteLine("no mp3 files were found");
-                        return;
-                    }
-                    path = (Folder) directories[i].GetFolder;
-                    i++;
-                }
-                p = ((Folder3)path).Self.Path;
                 Settings.SourceMusicDriversPath = PathToDynamicPath(p);
-                
+                UpdateSourceTextBox();
             });
         }
 
         public void UpdateDestinationMusicPath()
         {
-            UpdateMusicPath(p => Settings.DestinationMusicDriversPath = PathToDynamicPath(p));
+            UpdateMusicPath(p =>
+            {
+                Settings.DestinationMusicDriversPath = PathToDynamicPath(p);
+                UpdateDestinationMusicPath();
+            });
         }
 
         private DynamicPath PathToDynamicPath(string path)
         {
             Folder3 folder = (Folder3)shell.NameSpace(path);
-            Console.WriteLine("PATH " + path);
             List<string> subFolders = new List<string>();
             if (folder != null && !folder.Self.IsFileSystem)
             {
+                if (!path.Contains("usb"))
+                {
+                    MessageBox.Show("מיקום לא תקין נבחר", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
+                    Console.WriteLine("Invalid path selected: " + path);
+                    return new DynamicPath();
+                }
                 while (folder.Self.Path.Count(c => c == '\\') != 4)
                 {
                     subFolders.Add(folder.Title);
                     folder = (Folder3) folder.ParentFolder;
                 }
+                if(subFolders.Count == 0)
+                {
+                    MessageBox.Show("יש לבחור תיקייה בתוך המכשיר", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
+                    Console.WriteLine("Please select a folder within the device");
+                    return new DynamicPath();
+                }
             }
+            subFolders.Reverse();
             return new DynamicPath()
             {
                 RootDrivePath = folder.Self.Path,
@@ -90,34 +90,39 @@ namespace Music_Ripper
             if (TryGetSelectedPath(out string path))
             {
                 setSetting(path);
-                UpdateTextBoxs();
             }
         }
 
-        private void UpdateTextBoxs()
+        private void UpdateDestinationTextBoxs()
         {
             form.SourceMusicPath.Text = GetPathAsText(Settings.SourceMusicDriversPath.GetPath());
             form.DestinationMusicPath.Text = GetPathAsText(Settings.DestinationMusicDriversPath.GetPath());
         }
 
+        private void UpdateSourceTextBox()
+        {
+            form.SourceMusicPath.Text = GetPathAsText(Settings.SourceMusicDriversPath.GetPath());
+        }
+
         public void SaveSettings()
         {
             XmlManager<Settings> xmlManager = new XmlManager<Settings>();
-            xmlManager.Save("Settings", Settings);
+            xmlManager.Save("Settings.xml", Settings);
         }
 
         public void LoadSettings()
         {
-            if (!File.Exists("Settings")) { return; }
+            if (!File.Exists("Settings.xml")) { return; }
             XmlManager<Settings> xmlManager = new XmlManager<Settings>();
-            Settings = xmlManager.Load("Settings");
-            UpdateTextBoxs();
+            Settings = xmlManager.Load("Settings.xml");
+            UpdateSourceTextBox();
+            UpdateDestinationTextBoxs();
         }
 
         private bool TryGetSelectedPath(out string path)
         {
             path = "";
-            Folder folder = shell.BrowseForFolder(0, "Select folder", 0);
+            Folder folder = shell.BrowseForFolder(0, "בחר תיקיית מוזיקה", 0);
             if (folder != null)
             {
                 path = RemoveBadStringFromPath((Folder3) folder);
