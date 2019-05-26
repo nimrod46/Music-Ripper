@@ -49,7 +49,7 @@ namespace Music_Ripper
             UpdateMusicPath(p =>
             {
                 Settings.DestinationMusicDriversPath = PathToDynamicPath(p);
-                UpdateDestinationMusicPath();
+                UpdateDestinationTextBoxs();
             });
         }
 

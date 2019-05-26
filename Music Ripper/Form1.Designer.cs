@@ -30,6 +30,10 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.MusicTagName = new System.Windows.Forms.TextBox();
+            this.MoveFiles = new System.Windows.Forms.Button();
+            this.ChangeFileTag = new System.Windows.Forms.Button();
             this.LoadMusic = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.LoadSettings = new System.Windows.Forms.Button();
@@ -38,10 +42,7 @@
             this.SelectMusicSourceButton = new System.Windows.Forms.Button();
             this.DestinationMusicPath = new System.Windows.Forms.TextBox();
             this.SourceMusicPath = new System.Windows.Forms.TextBox();
-            this.ChangeFileTag = new System.Windows.Forms.Button();
-            this.MoveFiles = new System.Windows.Forms.Button();
-            this.MusicTagName = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.textBox3);
             this.tabPage1.Controls.Add(this.MusicTagName);
             this.tabPage1.Controls.Add(this.MoveFiles);
@@ -71,6 +73,43 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(293, 6);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.textBox3.Size = new System.Drawing.Size(65, 20);
+            this.textBox3.TabIndex = 7;
+            this.textBox3.Text = "שם אלבום:";
+            // 
+            // MusicTagName
+            // 
+            this.MusicTagName.Location = new System.Drawing.Point(187, 6);
+            this.MusicTagName.Name = "MusicTagName";
+            this.MusicTagName.Size = new System.Drawing.Size(100, 20);
+            this.MusicTagName.TabIndex = 4;
+            // 
+            // MoveFiles
+            // 
+            this.MoveFiles.Location = new System.Drawing.Point(106, 35);
+            this.MoveFiles.Name = "MoveFiles";
+            this.MoveFiles.Size = new System.Drawing.Size(75, 35);
+            this.MoveFiles.TabIndex = 3;
+            this.MoveFiles.Text = "הזז קבצים למיקום יעד";
+            this.MoveFiles.UseVisualStyleBackColor = true;
+            this.MoveFiles.Click += new System.EventHandler(this.MoveFiles_Click);
+            // 
+            // ChangeFileTag
+            // 
+            this.ChangeFileTag.Location = new System.Drawing.Point(106, 6);
+            this.ChangeFileTag.Name = "ChangeFileTag";
+            this.ChangeFileTag.Size = new System.Drawing.Size(75, 23);
+            this.ChangeFileTag.TabIndex = 2;
+            this.ChangeFileTag.Text = "שנה שם";
+            this.ChangeFileTag.UseVisualStyleBackColor = true;
+            this.ChangeFileTag.Click += new System.EventHandler(this.ChangeFileTag_Click);
             // 
             // LoadMusic
             // 
@@ -153,42 +192,14 @@
             this.SourceMusicPath.Size = new System.Drawing.Size(117, 20);
             this.SourceMusicPath.TabIndex = 5;
             // 
-            // ChangeFileTag
+            // button1
             // 
-            this.ChangeFileTag.Location = new System.Drawing.Point(106, 6);
-            this.ChangeFileTag.Name = "ChangeFileTag";
-            this.ChangeFileTag.Size = new System.Drawing.Size(75, 23);
-            this.ChangeFileTag.TabIndex = 2;
-            this.ChangeFileTag.Text = "שנה שם";
-            this.ChangeFileTag.UseVisualStyleBackColor = true;
-            this.ChangeFileTag.Click += new System.EventHandler(this.ChangeFileTag_Click);
-            // 
-            // MoveFiles
-            // 
-            this.MoveFiles.Location = new System.Drawing.Point(106, 35);
-            this.MoveFiles.Name = "MoveFiles";
-            this.MoveFiles.Size = new System.Drawing.Size(75, 35);
-            this.MoveFiles.TabIndex = 3;
-            this.MoveFiles.Text = "הזז קבצים למיקום יעד";
-            this.MoveFiles.UseVisualStyleBackColor = true;
-            this.MoveFiles.Click += new System.EventHandler(this.MoveFiles_Click);
-            // 
-            // MusicTagName
-            // 
-            this.MusicTagName.Location = new System.Drawing.Point(187, 6);
-            this.MusicTagName.Name = "MusicTagName";
-            this.MusicTagName.Size = new System.Drawing.Size(100, 20);
-            this.MusicTagName.TabIndex = 4;
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(293, 6);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.textBox3.Size = new System.Drawing.Size(65, 20);
-            this.textBox3.TabIndex = 7;
-            this.textBox3.Text = "שם אלבום:";
+            this.button1.Location = new System.Drawing.Point(106, 76);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -223,6 +234,7 @@
         private System.Windows.Forms.Button MoveFiles;
         private System.Windows.Forms.Button ChangeFileTag;
         public System.Windows.Forms.TextBox MusicTagName;
+        private System.Windows.Forms.Button button1;
     }
 }
 

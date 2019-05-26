@@ -10,9 +10,9 @@ using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace Music_Ripper
 {
 
@@ -48,7 +48,7 @@ namespace Music_Ripper
 
         private void NoMusicFound(string path)
         {
-            Console.WriteLine("No music folder was found in: " + path);
+            Console.WriteLine("No music files were found in: " + path);
         }
 
         private void LoadMusic_Click(object sender, EventArgs e)

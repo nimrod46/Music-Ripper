@@ -29,23 +29,28 @@ namespace Music_Ripper
                 return false;
             }
             Folder pathFolder = shell.NameSpace(rootPath);
-            List<FolderItem> directories = pathFolder.Items().Cast<FolderItem>().Where(item => item.IsFolder).Cast<FolderItem>().OrderByDescending(item => item.ModifyDate).ToList();
-
-            int i = 0;
-            while (!pathFolder.Items().Cast<FolderItem>().Any(item => item.Type == "MP3 File"))
+            if(pathFolder.Items().Count == 0)
             {
-                if (i >= directories.Count)
-                {
-                    //TODO: Add dialog that mp3 files were not found.
-                    MessageBox.Show("לא נמצאו קבצי MP3", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
-                    Console.WriteLine("no mp3 files were found");
-                    return false;
-                }
-                pathFolder = (Folder)directories[i].GetFolder;
-                i++;
+                return false;
             }
-            path = ((Folder3)pathFolder).Self.Path;
-            return true;
+            List<FolderItem> directories = pathFolder.Items().Cast<FolderItem>().Cast<FolderItem>().OrderByDescending(item => item.ModifyDate).ToList();
+            foreach (FolderItem item in directories)
+            {
+                if(item.Type == "MP3 File")
+                {
+                    path = ((Folder3)pathFolder).Self.Path;
+                    Console.WriteLine(path);
+                    return true;
+                }
+                else if(item.IsFolder)
+                {
+                    if(TryGetPathWithMp3Files(item.Path, out path))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public void SetMusicTag(string sourcePath)
