@@ -25,7 +25,6 @@ namespace Music_Ripper
             path = "";
             if (string.IsNullOrWhiteSpace(rootPath))
             {
-                MessageBox.Show("נתיב ריק", "שגיאה", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
                 return false;
             }
             Folder pathFolder = shell.NameSpace(rootPath);

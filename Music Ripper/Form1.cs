@@ -7,34 +7,11 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace Music_Ripper
 {
-
-    public struct DriveInf
-    {
-        public string RootDir { get; set; }
-        public string Perfix { get; set; }
-
-        public DriveInf(string rootDir, string perfix) : this()
-        {
-            RootDir = rootDir;
-            Perfix = perfix;
-        }
-
-        public override string ToString()
-        {
-            return Perfix + RootDir;
-        }
-    }
     public partial class Form1 : Form
     { 
-       
         private Shell shell;
         public SettingsTab settingsTab;
         private ProgramTab programTab;
@@ -46,20 +23,11 @@ namespace Music_Ripper
             programTab = new ProgramTab(this);
         }
 
-        private void NoMusicFound(string path)
-        {
-            Console.WriteLine("No music files were found in: " + path);
-        }
-
         private void LoadMusic_Click(object sender, EventArgs e)
         {
             if (programTab.TryGetPathWithMp3Files(settingsTab.Settings.SourceMusicDriversPath.GetPath(), out string sourcePath)){
                 programTab.SetMusicTag(sourcePath);
                 programTab.MoveMusic(sourcePath, settingsTab.Settings.DestinationMusicDriversPath.GetPath());
-            }
-            else
-            {
-                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
             }
         }
 
@@ -89,10 +57,6 @@ namespace Music_Ripper
             {
                 programTab.SetMusicTag(sourcePath);
             }
-            else
-            {
-                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
-            }
         }
 
         private void MoveFiles_Click(object sender, EventArgs e)
@@ -100,10 +64,6 @@ namespace Music_Ripper
             if (programTab.TryGetPathWithMp3Files(settingsTab.Settings.SourceMusicDriversPath.GetPath(), out string sourcePath))
             {
                 programTab.MoveMusic(sourcePath, settingsTab.Settings.DestinationMusicDriversPath.GetPath());
-            }
-            else
-            {
-                NoMusicFound(settingsTab.Settings.SourceMusicDriversPath.GetPath());
             }
         }
     }

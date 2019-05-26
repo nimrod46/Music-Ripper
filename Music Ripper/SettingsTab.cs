@@ -95,7 +95,6 @@ namespace Music_Ripper
 
         private void UpdateDestinationTextBoxs()
         {
-            form.SourceMusicPath.Text = GetPathAsText(Settings.SourceMusicDriversPath.GetPath());
             form.DestinationMusicPath.Text = GetPathAsText(Settings.DestinationMusicDriversPath.GetPath());
         }
 
