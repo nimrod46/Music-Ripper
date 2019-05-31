@@ -121,7 +121,7 @@ namespace Music_Ripper
         private bool TryGetSelectedPath(out string path)
         {
             path = "";
-            Folder folder = shell.BrowseForFolder(0, "בחר תיקיית מוזיקה", 0);
+            Folder folder = shell.BrowseForFolder((int) form.Handle, "בחר תיקיית מוזיקה", 0);
             if (folder != null)
             {
                 path = RemoveBadStringFromPath((Folder3) folder);
