@@ -35,7 +35,7 @@ namespace Music_Ripper
             List<FolderItem> directories = pathFolder.Items().Cast<FolderItem>().Cast<FolderItem>().OrderByDescending(item => item.ModifyDate).ToList();
             foreach (FolderItem item in directories)
             {
-                if(item.Type == "MP3 File")
+                if(item.Type.Contains("MP3"))
                 {
                     path = ((Folder3)pathFolder).Self.Path;
                     Console.WriteLine(path);
@@ -49,6 +49,7 @@ namespace Music_Ripper
                     }
                 }
             }
+            Console.WriteLine("No MP3 filse were found at: " + rootPath);
             return false;
         }
 
@@ -68,7 +69,7 @@ namespace Music_Ripper
             }
 
 
-            FolderItem[] musicFiles = folder.Items().Cast<FolderItem>().Where(item => item.Type == "MP3 File").ToArray();
+            FolderItem[] musicFiles = folder.Items().Cast<FolderItem>().Where(item => item.Type.Contains("MP3")).ToArray();
 
             foreach (FolderItem musicFilePath in musicFiles)
             {
@@ -112,7 +113,7 @@ namespace Music_Ripper
             }
             foreach (FolderItem currFolderItem in srcFolder.Items())
             {
-                if (currFolderItem.Type == "MP3 File")
+                if (currFolderItem.Type.Contains("MP3"))
                 {
                     dstFolder.CopyHere(currFolderItem, 0);
                 }

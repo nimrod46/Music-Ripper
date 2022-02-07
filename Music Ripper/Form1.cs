@@ -21,6 +21,10 @@ namespace Music_Ripper
             shell = new Shell();
             settingsTab = new SettingsTab(this);
             programTab = new ProgramTab(this);
+            Console.WriteLine("init");
+            Console.WriteLine(shell);
+            Console.WriteLine(settingsTab);
+            Console.WriteLine(programTab);
         }
 
         private void LoadMusic_Click(object sender, EventArgs e)
